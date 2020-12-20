@@ -1,6 +1,24 @@
 import React, { Component } from 'react';
 import './App.css';
 import Customer from './components/Customer';
+import Paper from '@material-ui/core/Paper';
+import Table from '@material-ui/core/Table';
+import TableHead from '@material-ui/core/TableHead';
+import TableBody from '@material-ui/core/Table';
+import TableRow from '@material-ui/core/TableRow';
+import TableCeil from '@material-ui/core/TableCell';
+import { withStyles } from '@material-ui/core/styles';
+
+const styles = theme => ({
+  root: {
+    width: '100%',
+    marginTop : theme.spacing.unit * 3,
+    overflowX: "atuo"
+  },
+  table: {
+    minWidth: 1080
+  }
+})
 
 const customers = [
   {
@@ -31,26 +49,28 @@ const customers = [
 
 class App extends Component {
   render(){
+    const { classes } = this.props;
     return (
-      <div>
-        {
-          customers.map(info => {
-            return (
-              <Customer 
-                key={info.id} // map()은 키 값이 꼭 있어야한다
-                id={info.id}
-                image={info.image}
-                name={info.name}
-                birthday={info.birthday}
-                gender={info.gender}
-                job={info.job}  
-              />
-            );
-          })
-        }
-      </div>
+      <Paper className={classes.root}>
+        <Table className={classes.table}>
+          <TableHead>
+            <TableRow>
+              <TableCeil>번호</TableCeil>
+              <TableCeil>이미지</TableCeil>
+              <TableCeil>이름</TableCeil>
+              <TableCeil>생년월일</TableCeil>
+              <TableCeil>성별</TableCeil>
+              <TableCeil>직업</TableCeil>
+            </TableRow>
+          </TableHead>
+
+          <TableBody>          {/* map()은 키 값이 꼭 있어야한다 */}
+          {customers.map(info => { return (<Customer key={info.id} id={info.id} image={info.image} name={info.name} birthday={info.birthday} gender={info.gender} job={info.job}/>); })}
+          </TableBody>
+        </Table>
+      </Paper>
     );
   }
 }
 
-export default App;
+export default withStyles(styles)(App);

@@ -1,43 +1,19 @@
 import React from 'react';
+import TableRow from '@material-ui/core/TableRow';
+import TableCeil from '@material-ui/core/TableCell';
 
 class Customer extends React.Component {
-    render(){
+    render() {
         return (
-            <div>
-                <CustomerProfile id={this.props.id} 
-                                 image={this.props.image}
-                                 name={this.props.name} />
-
-                <CustomerInfo birthday={this.props.birthday}
-                              gender={this.props.gender}
-                              job={this.props.job} />
-            </div>
+            <TableRow>
+                <TableCeil>{this.props.id}</TableCeil>
+                <TableCeil><img src={this.props.image} alt="profile"/></TableCeil>
+                <TableCeil>{this.props.name}</TableCeil>
+                <TableCeil>{this.props.birthday}</TableCeil>
+                <TableCeil>{this.props.gender}</TableCeil>
+                <TableCeil>{this.props.job}</TableCeil>
+            </TableRow>
         ) 
-    }
-}
-
-// 고객의 기본 정보
-class CustomerProfile extends React.Component {
-    render() {
-     return(
-         <div>
-             <img src={this.props.image} alt="profile" />
-             <h2>{this.props.name}({this.props.id})</h2>
-         </div>
-     )   
-    }
-}
-
-// 고객의 세밀 정보
-class CustomerInfo  extends React.Component {
-    render() {
-        return (
-            <div>
-                <p>{this.props.birthday}</p>
-                <p>{this.props.gender}</p>
-                <p>{this.props.job}</p>
-            </div>
-        )
     }
 }
 
