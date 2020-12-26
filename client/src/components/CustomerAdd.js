@@ -1,6 +1,19 @@
 import React from 'react';
 // post 방식으로 데이터를 고객추가데이터를 서버로 보내도록 함
 import { post } from 'axios'; 
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import DialongContent from '@material-ui/core/DialogContent';
+import TextField from '@material-ui/core/TextField';
+import Button from '@material-ui/core/Button';
+import { withStyles }  from '@material-ui/core/styles';
+
+const styles = theme => ({
+    hidden : {
+        display : 'none'
+    }
+});
 
 class CustomerAdd extends React.Component {
     constructor(props) {
@@ -12,7 +25,8 @@ class CustomerAdd extends React.Component {
             birthday: '',
             gender: '',
             job: '',
-            fileName: ''
+            fileName: '',
+            open: false // 고객 추가 창 설정
         }
     }
 
@@ -21,6 +35,8 @@ class CustomerAdd extends React.Component {
         this.addCustomer()
             .then((response) => { // 서버로부터 응답이 왔을 때
                 console.log(response.data);
+                this.props.stateRefresh(); 
+                // 서버 응답 후 새로고침이 되면서 고객이 추가된다
             })
         this.setState({ // state 값 초기화
             file: null,
@@ -28,9 +44,10 @@ class CustomerAdd extends React.Component {
             birthday: '',
             gender: '',
             job: '',
-            fileName: ''
+            fileName: '',
+            open: false // 고객 추가 후 창닫기
         })
-        window.location.reload(); // 새로고침이 되면서 고객이 추가된다
+        //window.location.reload(); 새로고침이 되면서 고객이 추가된다
     }
 
     handleFileChange = (e) => {
@@ -68,35 +85,84 @@ class CustomerAdd extends React.Component {
        환경설정(config)에 맞게 데이터를 전송한다 */
     }
 
+    // 팝업창 클릭 이벤트
+    handleClickOpen = () => {
+        this.setState({
+            open: true
+        });
+    }
+    handleClickClose = () => {
+        this.setState({ // state 값 초기화
+            file: null,
+            userName: '',
+            birthday: '',
+            gender: '',
+            job: '',
+            fileName: '',
+            open: false
+        })
+    }
+
     render() {
+        const { classes } = this.props;
         return (
-            <form onSubmit={this.handleFormSubmit}>
-                <h2>고객 추가</h2>
-                프로필 이미지 : <input type="file" 
-                                name="file" 
-                                file={this.state.file} 
-                                value={this.state.fileName} 
-                                onChange={this.handleFileChange} /><br/>
-                이름 : <input type="text" 
-                              name="userName"
-                              value={this.state.userName}
-                              onChange={this.handleValueChange} /><br/>
-                생년월일 : <input type="text" 
-                                  name="birthday"
-                                  value={this.state.birthday}
-                                  onChange={this.handleValueChange} /><br/>
-                성별 : <input type="text" 
-                              name="gender"
-                              value={this.state.gender}
-                              onChange={this.handleValueChange}/> <br/>
-                직업 :  <input type="text" 
+            <div>
+                <Button variant="contained" color="primary"
+                        onClick={this.handleClickOpen}>
+                    고객 추가
+                </Button>
+                <Dialog open={this.state.open}
+                         onClose={this.handleClickClose}>
+                    <DialogTitle>고객 추가</DialogTitle>
+                    <DialongContent>
+                    <input type="file" className={classes.hidden}
+                           accept="image/*"
+                           id="raised-button-file"
+                           file={this.state.file} 
+                           value={this.state.fileName} 
+                           onChange={this.handleFileChange} />
+                    <label htmlFor="raised-button-file">
+                        <Button variant="contained"
+                                color="primary"
+                                component="span"
+                                name="file">
+                            {this.state.fileName === "" ? "프로필 이미지 선택" : this.state.fileName}
+                        </Button>
+                    </label>
+                    <br/>
+                    <TextField type="text" label="이름" 
+                               name="userName"
+                               value={this.state.userName}
+                               onChange={this.handleValueChange} /><br/>
+                    <TextField type="text" label="생년월일" 
+                               name="birthday"
+                               value={this.state.birthday}
+                               onChange={this.handleValueChange} /><br/>
+                    <TextField type="text" label="성별" 
+                               name="gender"
+                               value={this.state.gender}
+                               onChange={this.handleValueChange}/> <br/>
+                    <TextField type="text" label="직업" 
                                name="job"
                                value={this.state.job}
-                               onChange={this.handleValueChange}/><br/>
-                <button type="submit">추가하기</button>
-            </form>
+                               onChange={this.handleValueChange}/>
+                    </DialongContent>
+                    <DialogActions>
+                        <Button variant="contained"
+                                color="primary"
+                                onClick={this.handleFormSubmit}>
+                            추가
+                        </Button>
+                        <Button variant="outlined"
+                                color="primary"
+                                onClick={this.handleClickClose}>
+                            닫기
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+            </div>
         )
     }
 }
 
-export default CustomerAdd;
+export default withStyles(styles)(CustomerAdd);

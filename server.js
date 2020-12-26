@@ -28,7 +28,8 @@ const upload = multer({dest: './upload'})
 
 app.get('/api/customers', (req, res) => {
    connection.query(
-     "SELECT id, image, name, birthday, gender, job FROM customer",
+     // isDeleted => 삭제X -> 0 삭제O -> 1
+     "SELECT * FROM customer WHERE isDeleted = 0",
      (err, rows, fields) => {
        res.send(rows);
      }
@@ -40,7 +41,7 @@ app.use('/image', express.static('./upload'));
       // 접근url                             -> mapping
 
 app.post('/api/customers', upload.single('image'), (req, res) => {
-  let sql = 'INSERT INTO customer VALUES (null, ?, ?, ? ,? ,?)';
+  let sql = 'INSERT INTO customer VALUES (null, ?, ?, ? ,? ,?, now(), 0)';
   let image = '/image/' + req.file.filename;
   let name = req.body.name;
   let birthday = req.body.birthday;
@@ -52,6 +53,16 @@ app.post('/api/customers', upload.single('image'), (req, res) => {
     (err, rows, fileds) => {
       res.send(rows); // 입력성공 시 관련 메시지를 클라이언트에게 출력해줌
   })
+});
+
+app.delete('/api/customers/:id', (req, res) => {
+  let sql = 'UPDATE customer SET isDeleted = 1 WHERE id = ?';
+  let params = [req.params.id];
+  connection.query(sql, params,
+    (err, rows, fields) => {
+      res.send(rows);
+    }
+  )
 });
 
 app.listen(port, () => console.log(`Listening on port ${port}`));
